@@ -1,0 +1,531 @@
+* signIn(로그인)
+-request
+{
+    *email: String,
+    *password: String
+}
+-response
+성공(로그인 성공)
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok"
+}
+실패 - 필수 정보 미입력
+- 로그인 실패
+HttpStatus - 401(Unauthorized)
+{
+    code: "SignInFail",
+    message: "Sign In Failed."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+* signUp(회원 가입)
+- request
+{
+    *email: String,
+    *password: String,
+    *nickName: String,
+    *telNumber: String,
+    *address: Address,
+    addressDetail: String
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+   token: "jwt...",
+   expiredDate: 214141242
+}
+실패 - 이메일 포멧 불일치, 비밀번호 8자 미만, 전화번호 포멧 불일치, 필수 정보 미입력
+- 중복된 이메일
+HttpStatus - 400(Bad Request)
+{
+    code: "ExistedEmail",
+    message: "Existed Email."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*weeklyTop3List(주간 상위 top3 게시물 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    top3List: BoardListItem[]
+}
+BoardItemList{
+    boardNumber: int,
+    title: String,
+    content: String,
+    boardTitleImage: String,
+    favoriteCount: int,
+    commentCount: int,
+    viewCount: int,
+    writeDateTime: String,
+    writerNickName: String,
+    writerProfileImage: String,
+
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*currentList(최신 게시물 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    currentList: BoardListItem[]
+}
+BoardItemList{
+    boardNumber: int,
+    title: String,
+    content: String,
+    boardTitleImage: String,
+    favoriteCount: int,
+    commentCount: int,
+    viewCount: int,
+    writeDateTime: String,
+    writerNickName: String,
+    writerProfileImage: String,
+
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*popularWordList(인기 검색어 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    popularWordList: String[]
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*searchList(검색 게시물 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    searchList: BoardListItem[]
+}
+BoardItemList{
+    boardNumber: int,
+    title: String,
+    content: String,
+    boardTitleImage: String,
+    favoriteCount: int,
+    commentCount: int,
+    viewCount: int,
+    writeDateTime: String,
+    writerNickName: String,
+    writerProfileImage: String,
+
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*relativeWordList(관련 검색어 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    relativeWordList: BoardListItem[]
+}
+BoardItemList{
+    boardNumber: int,
+    title: String,
+    content: String,
+    boardTitleImage: String,
+    favoriteCount: int,
+    commentCount: int,
+    viewCount: int,
+    writeDateTime: String,
+    writerNickName: String,
+    writerProfileImage: String,
+
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*boardDetail(게시물 상세)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    boardNumber: int,
+    title: String,
+    content: String,
+    boardImage: String[],
+    writeDateTime: String,
+    writerEmail: String,
+    writerNickName: String,
+    writerProfileImage: String,
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistBoardNumber",
+    message: "No Exist Board Number."
+}
+======================================================================
+*favoriteList(좋아요 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    favoriteList: FavoriteListItem[]
+}
+FavoriteItemList{
+    email: String,
+    nickName: String,
+    profileImage: String
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*putFavorite(좋아요 기능)
+-request
+{
+    boardNumber: int
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok"
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*commentList(댓글 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+   commentList: CommentListItem[]
+}
+CommentListItem{
+    email: String,
+    nickName: String,
+    writeDateTime: String,
+    content: String
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*postComment(댓글 쓰기)
+-request
+{
+    content: String
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+}
+실패
+- 존재하지 않는 게시물
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistBoardNumber",
+    message: "No Exist Board Number."
+}
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*boardWrite(게시물 쓰기)
+-request
+{
+    *title: String
+    *content: String,
+    boardImageList: String[]
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+}
+실패
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*boardDelete(게시물 삭제)
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+}
+실패
+- 존재하지 않는 게시물
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistBoardNumber",
+    message: "No Exist Board Number."
+}
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 권한 없음
+HttpStatus - 403(Forbidden)
+{
+    code: "NoPermission",
+    message: "No Permission."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*boardUpdate(게시물 수정)
+-request
+{
+    *title: String
+    *content: String,
+    boardImageList: String[]
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+}
+실패
+- 존재하지 않는 게시물
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistBoardNumber",
+    message: "No Exist Board Number."
+}
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 권한 없음
+HttpStatus - 403(Forbidden)
+{
+    code: "NoPermission",
+    message: "No Permission."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*getUser(유저 정보)
+-response
+성공
+HttpStatus - 200(OK)
+{
+   code: "SUCCESS",
+   message: "ok",
+   email: String,
+   nickName: String,
+   profileImage: String
+}
+실패
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*userBoardList(특정 유저 게시물 리스트)
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+    boardList: BoardListItem[]
+}
+BoardItemList{
+    boardNumber: int,
+    title: String,
+    content: String,
+    boardTitleImage: String,
+    favoriteCount: int,
+    commentCount: int,
+    viewCount: int,
+    writeDateTime: String,
+    writerNickName: String,
+    writerProfileImage: String,
+
+}
+실패
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+patchNickname(닉네임 수정)
+-request
+{
+    *nickname: String
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+}
+실패
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+patchProfileImage(프로필 이미지 수정)
+-request
+{
+    *profileImage: String
+}
+-response
+성공
+HttpStatus - 200(OK)
+{
+    code: "SUCCESS",
+    message: "Success.",
+}
+실패
+- 존재하지 않는 유저
+HttpStatus - 400(Bad Request)
+{
+    code: "NoExistUser",
+    message: "No Exist User."
+}
+- 데이터베이스 에러
+HttpStatus - 500(Internal Server Error)
+{
+    code: "DatabaseError",
+    message: "Database Error"
+}
+======================================================================
+*fileUpload(파일 업로드)
+======================================================================
+*getFile(파일 불러오기)
+======================================================================
