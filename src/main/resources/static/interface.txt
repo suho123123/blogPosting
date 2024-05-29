@@ -330,8 +330,10 @@ HttpStatus - 500(Internal Server Error)
 }
 ======================================================================
 *postComment(댓글 쓰기)
+url: POST /api/v1/board/comment
 -request
 {
+    boardId: String
     content: String
 }
 -response
@@ -353,6 +355,12 @@ HttpStatus - 400(Bad Request)
 {
     code: "NoExistUser",
     message: "No Exist User."
+}
+- 권한 없음
+HttpStatus - 403(Forbidden)
+{
+    code: "NoPermission",
+    message: "No Permission."
 }
 - 데이터베이스 에러
 HttpStatus - 500(Internal Server Error)

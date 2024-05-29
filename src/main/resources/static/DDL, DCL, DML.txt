@@ -1,0 +1,269 @@
+
+
+CREATE TABLE board
+(
+  board_number   INT         NOT NULL AUTO_INCREMENT COMMENT '게시물 번호',
+  title          TEXT        NOT NULL COMMENT '게시물 제목',
+  content        TEXT        NOT NULL COMMENT '게시물 내용',
+  write_datetime DATETIME    NOT NULL COMMENT '게시물 작성 날짜',
+  favorite_count INT         NOT NULL DEFAULT 0 COMMENT '게시물 좋아요 개수',
+  comment_count  INT         NOT NULL DEFAULT 0 COMMENT '게시물 댓글 개수',
+  view_count     INT         NOT NULL DEFAULT 0 COMMENT '게시물 조회수',
+  writer_email   VARCHAR(50) NOT NULL COMMENT '사용자 이메일',
+  PRIMARY KEY (board_number)
+) COMMENT '게시물 테이블';
+
+
+CREATE TABLE comment
+(
+  comment_number INT         NOT NULL AUTO_INCREMENT COMMENT '댓글 번호',
+  content        TEXT        NOT NULL COMMENT '댓글 내용',
+  write_datetime DATETIME    NOT NULL COMMENT '작성 날짜',
+  user_email     VARCHAR(50) NOT NULL COMMENT '사용자 이메일',
+  board_number   INT         NOT NULL COMMENT '게시물 번호',
+  PRIMARY KEY (comment_number)
+) COMMENT '댓글 테이블';
+
+CREATE TABLE favorite
+(
+  user_email   VARCHAR(50) NOT NULL COMMENT '사용자 이메일',
+  board_number INT         NOT NULL COMMENT '게시물 번호',
+  PRIMARY KEY (user_email, board_number)
+) COMMENT '좋아요 테이블';
+
+CREATE TABLE image
+(
+  board_number INT  NOT NULL COMMENT '게시물 번호',
+  image        TEXT NOT NULL COMMENT '게시물 이미지 URL'
+) COMMENT '게시물 이미지 테이블';
+
+CREATE TABLE search_log
+(
+  sequence      INT     NOT NULL AUTO_INCREMENT COMMENT '시퀸스',
+  search_word   TEXT    NOT NULL COMMENT '검색어',
+  relation_word TEXT    NULL     COMMENT '관련 검색어',
+  relation      BOOLEAN NOT NULL COMMENT '관련 검색어 여부',
+  PRIMARY KEY (sequence)
+) COMMENT '검색 기록 테이블';
+
+
+CREATE TABLE user
+(
+  email          VARCHAR(50)  NOT NULL COMMENT '사용자 이메일',
+  password       VARCHAR(100) NOT NULL COMMENT '사용자 비밀번호',
+  nickname       VARCHAR(20)  NOT NULL UNIQUE COMMENT '사용자 닉네임',
+  tel_number     VARCHAR(15)  NOT NULL UNIQUE COMMENT '사용자 전화번호',
+  address        TEXT         NOT NULL COMMENT '사용자 주소',
+  address_detail TEXT         NULL     COMMENT '사용자 상세주소',
+  profile_image  TEXT         NULL     COMMENT '사용자 프로필 사진',
+  PRIMARY KEY (email)
+) COMMENT '사용자 테이블';
+
+ALTER TABLE image
+  ADD CONSTRAINT FK_board_TO_image
+    FOREIGN KEY (board_number)
+    REFERENCES board (board_number);
+
+ALTER TABLE board
+  ADD CONSTRAINT FK_user_TO_board
+    FOREIGN KEY (writer_email)
+    REFERENCES user (email);
+
+ALTER TABLE favorite
+  ADD CONSTRAINT FK_user_TO_favorite
+    FOREIGN KEY (user_email)
+    REFERENCES user (email);
+
+ALTER TABLE favorite
+  ADD CONSTRAINT FK_board_TO_favorite
+    FOREIGN KEY (board_number)
+    REFERENCES board (board_number);
+
+ALTER TABLE comment
+  ADD CONSTRAINT FK_user_TO_comment
+    FOREIGN KEY (user_email)
+    REFERENCES user (email);
+
+ALTER TABLE comment
+  ADD CONSTRAINT FK_board_TO_comment
+    FOREIGN KEY (board_number)
+    REFERENCES board (board_number);
+
+--------------------------------------------------------------------------------------------------------
+-- 회원가입
+INSERT INTO user VALUES ('qwerty123@gmail.com', '1234', 'qwerty', '01012345678', '서울시', '서울시', null);
+
+-- 로그인
+SELECT * FROM user WHERE email = 'qewrty123@gmail.com';
+
+-- 게시물 작성
+INSERT INTO board (title, content, write_datetime, favorite_count, comment_count, view_count, writer_email)
+VALUES ('제목', '내용', '2024-05-29 16:27', 0, 0, 0, 'qwerty123@gmail.com');
+
+-- 게시물 이미지
+INSERT INTO image VALUES (1, 'url');
+
+-- 댓글 작성
+INSERT INTO comment (content, write_datetime, user_email, board_number)
+VALUES ('안녕하세요.', '2024-05-29 16:30', 'qwerty123@gmail.com', 1);
+
+UPDATE board SET comment_count = comment_count + 1 where board_number = 1;
+
+-- 좋아요
+INSERT INTO favorite VALUES ('qwerty123@gmail.com', 1);
+
+UPDATE board SET favorite_count = favorite_count + 1 where board_number = 1;
+
+UPDATE board SET favorite_count = favorite_count - 1 where board_number = 1;
+
+DELETE FROM favorite WHERE user_email = 'qwerty123@gmail.com' AND board_number = 1;
+
+-- 게시물 수정
+update board set title = '수정 타이틀.', content = '수정 내용.' where board_number = 1;
+
+delete from image where board_number = 1;
+
+insert into image values (1, 'url');
+
+-- 게시물 삭제
+delete from comment where board_number = 1;
+
+delete from favorite where board_number = 1;
+
+delete from board where board_number = 1;
+
+-- 게시물 상세
+select
+	b.board_number as board_number,
+	b.title as title,
+	b.content as content,
+	b.write_datetime as write_datetime,
+    b.writer_email as writer_email,
+    u.nickname as nickname,
+    u.profile_image as profile_image
+from board as b inner join user as u on b.writer_email = u.email
+where board_number = 1;
+
+select image from image where board_number = 1;
+
+select
+	u.email as email,
+    u.nickname as nickname,
+    u.profile_image
+from favorite as f inner join user as u
+on f.user_email = u.email
+where f.board_number = 1;
+
+select
+	u.nickname as nickname,
+    u.profile_image as profile_image,
+    c.write_datetime as write_datetime,
+	c.content as content
+from comment as c inner join user as u
+on c.user_email = u.email
+where c.board_number = 1
+order by write_datetime desc;
+
+-- 최신 게시물 리스트 불러오기
+select
+	b.board_number as board_number,
+    b.title as title,
+    b.content as content,
+    i.image as title_image,
+    b.view_count as view_count,
+    b.favorite_count as favorite_count,
+    b.comment_count as comment_count,
+    b.write_datetime as write_datetime,
+    u.nickname as writer_nickname,
+    u.profile_image as writer_profile_image
+from board as b
+inner join user as u on b.writer_email = u.email
+left join (select board_number, any_value(image) as image from image group by board_number) as i
+on b.board_number = i.board_number
+order by write_datetime desc
+limit 5, 5;
+
+-- 검색어 리스트 불러오기
+select
+	b.board_number as board_number,
+    b.title as title,
+    b.content as content,
+    i.image as title_image,
+    b.view_count as view_count,
+    b.favorite_count as favorite_count,
+    b.comment_count as comment_count,
+    b.write_datetime as write_datetime,
+    u.nickname as writer_nickname,
+    u.profile_image as writer_profile_image
+from board as b
+inner join user as u on b.writer_email = u.email
+left join (select board_number, any_value(image) as image from image group by board_number) as i
+on b.board_number = i.board_number
+where title like '%제목%' or content like '%제목%'
+order by write_datetime desc;
+
+-- 주간 상위 top3 게시물 불러오기
+select
+	b.board_number as board_number,
+    b.title as title,
+    b.content as content,
+    i.image as title_image,
+    b.view_count as view_count,
+    b.favorite_count as favorite_count,
+    b.comment_count as comment_count,
+    b.write_datetime as write_datetime,
+    u.nickname as writer_nickname,
+    u.profile_image as writer_profile_image
+from board as b
+inner join user as u on b.writer_email = u.email
+left join (select board_number, any_value(image) as image from image group by board_number) as i
+on b.board_number = i.board_number
+where write_datetime between '2024-05-23 00:00' and '2024-05-29 00:00'
+order by favorite_count desc, comment_count desc, view_count desc, write_datetime desc
+limit 3;
+
+-- 특정 유저 게시물 리스트 불러오기
+select
+	b.board_number as board_number,
+    b.title as title,
+    b.content as content,
+    i.image as title_image,
+    b.view_count as view_count,
+    b.favorite_count as favorite_count,
+    b.comment_count as comment_count,
+    b.write_datetime as write_datetime,
+    u.nickname as writer_nickname,
+    u.profile_image as writer_profile_image
+from board as b
+inner join user as u on b.writer_email = u.email
+left join (select board_number, any_value(image) as image from image group by board_number) as i
+on b.board_number = i.board_number
+where b.writer_email = 'qwerty123@gmail.com'
+order by write_datetime desc;
+
+-- 인기 검색어 리스트
+select search_word, count(search_word) as count
+from search_log
+where relation is false
+group by search_word
+order by count desc
+limit 15;
+
+-- 관련 검색어 리스트
+select relation_word, count(relation_word) as count
+from search_log
+where search_word = '검색어'
+group by relation_word
+order by count desc
+limit 15;
+
+-- 유저 정보 불러오기 / 로그인 유저 정보 불러오기
+select *
+from user
+where email = 'qwerty123@gmail.com';
+
+-- 닉네임 수정
+update user set nickname = '수정 닉네임' where email = 'qwerty123@gmail.com';
+
+-- 프로필 이미지 수정
+update user set profile_image = 'url123' where email = 'qwerty123@gmail.com';
