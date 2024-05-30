@@ -10,9 +10,16 @@ spring:
   thymeleaf:
     cache: false
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 110MB
+
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
     show-sql: true
     hibernate:
       ddl-auto: create
+
+secret-key: "S1e1c1r1e1t1K1e1yS1e1c1r1e1t1K1e1yS1e1c1r1e1t1K1e1y"
