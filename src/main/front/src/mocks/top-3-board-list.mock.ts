@@ -1,6 +1,6 @@
 import { BoardListItem } from 'types/interface';
 
-const latestBoardListMock: BoardListItem[] = [
+const top3BoardListMock: BoardListItem[] = [
     {
         "boardNumber": 1,
         "title": "아 내일 점심 뭐먹지???",
@@ -39,4 +39,4 @@ const latestBoardListMock: BoardListItem[] = [
     },
 ];
 
-export default latestBoardListMock;
+export default top3BoardListMock;
