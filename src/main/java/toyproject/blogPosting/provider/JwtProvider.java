@@ -26,7 +26,7 @@ public class JwtProvider {
 
         // jwt 생성
         String jwt = Jwts.builder()
-                .signWith(key, SignatureAlgorithm.ES256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(expiredDate)
