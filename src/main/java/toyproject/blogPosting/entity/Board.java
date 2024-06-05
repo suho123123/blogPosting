@@ -45,4 +45,15 @@ public class Board {
         this.writerEmail = email;
     }
 
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
+    public void increaseFavoriteCount() {
+        this.favoriteCount++;
+    }
+
+    public void decreaseFavoriteCount() {
+        this.favoriteCount--;
+    }
 }
