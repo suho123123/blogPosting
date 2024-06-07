@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import toyproject.blogPosting.dto.response.board.GetBoardResponseDto;
+import toyproject.blogPosting.dto.request.board.PostCommentRequestDto;
+import toyproject.blogPosting.dto.response.board.*;
 import toyproject.blogPosting.dto.request.board.PostBoardRequestDto;
-import toyproject.blogPosting.dto.response.board.GetFavoriteListResponseDto;
-import toyproject.blogPosting.dto.response.board.PostBoardResponseDto;
-import toyproject.blogPosting.dto.response.board.PutFavoriteResponseDto;
 import toyproject.blogPosting.service.BoardService;
 
 @RestController
@@ -50,6 +48,24 @@ public class BoardController {
             @PathVariable("boardNumber") Integer boardNumber) {
 
         ResponseEntity<? super GetFavoriteListResponseDto> response = boardService.getFavoriteList(boardNumber);
+        return response;
+    }
+
+    @PostMapping("{boardNumber}/comment")
+    public ResponseEntity<? super PostCommentResponseDto> postComment(
+            @PathVariable("boardNumber") Integer boardNumber,
+            @RequestBody @Valid PostCommentRequestDto requestBody,
+            @AuthenticationPrincipal String email) {
+
+        ResponseEntity<? super PostCommentResponseDto> response = boardService.postComment(requestBody, boardNumber, email);
+        return response;
+    }
+
+    @GetMapping("/{boardNumber}/comment-list")
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(
+            @PathVariable("boardNumber") Integer boardNumber) {
+
+        ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNumber);
         return response;
     }
 }
