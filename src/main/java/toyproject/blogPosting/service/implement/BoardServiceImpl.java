@@ -77,9 +77,9 @@ public class BoardServiceImpl implements BoardService {
 
             images = imageRepository.findByBoardNumber(boardNumber);
 
-            Board board = boardRepository.findByBoardNumber(boardNumber);
-            board.increaseViewCount();
-            boardRepository.save(board);
+//            Board board = boardRepository.findByBoardNumber(boardNumber);
+//            board.increaseViewCount();
+//            boardRepository.save(board);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,5 +190,60 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return GetCommentListResponseDto.success(resultSets);
+    }
+
+    @Override
+    public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber) {
+
+        try {
+
+            Board board = boardRepository.findByBoardNumber(boardNumber);
+            if(board == null) return IncreaseViewCountResponseDto.notExistBoard();
+
+            board.increaseViewCount();
+            boardRepository.save(board);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return IncreaseViewCountResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(Integer boardNumber, String email) {
+
+        try {
+
+            boolean existedUser = userRepository.existsByEmail(email);
+            if (!existedUser) {
+                return DeleteBoardResponseDto.noExistUser();
+            }
+
+            Board board = boardRepository.findByBoardNumber(boardNumber);
+            if (board == null) {
+                return DeleteBoardResponseDto.noExistBoard();
+            }
+
+            String writerEmail = board.getWriterEmail();
+            boolean isWriter = writerEmail.equals(email);
+
+            if (!isWriter) {
+                return DeleteBoardResponseDto.noPermission();
+            }
+
+            imageRepository.deleteByBoardNumber(boardNumber);
+            commentRepository.deleteByBoardNumber(boardNumber);
+            favoriteRepository.deleteByBoardNumber(boardNumber);
+            boardRepository.delete(board);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return DeleteBoardResponseDto.success();
     }
 }

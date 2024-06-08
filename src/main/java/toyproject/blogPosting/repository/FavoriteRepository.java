@@ -1,5 +1,6 @@
 package toyproject.blogPosting.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import toyproject.blogPosting.entity.Favorite;
@@ -21,5 +22,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, FavoritePk> 
                     "on f.user_email = u.email " +
                     "where f.board_number = ?1", nativeQuery = true)
     List<GetFavoriteListResultSet> getFavoriteList(Integer boardNumber);
+
+    @Transactional
+    void deleteByBoardNumber(Integer boardNumber);
 
 }
