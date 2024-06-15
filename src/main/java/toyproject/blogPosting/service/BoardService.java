@@ -1,6 +1,7 @@
 package toyproject.blogPosting.service;
 
 import org.springframework.http.ResponseEntity;
+import toyproject.blogPosting.dto.request.board.PatchBoardRequestDto;
 import toyproject.blogPosting.dto.request.board.PostCommentRequestDto;
 import toyproject.blogPosting.dto.response.board.*;
 import toyproject.blogPosting.dto.request.board.PostBoardRequestDto;
@@ -22,4 +23,7 @@ public interface BoardService {
     ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber);
 
     ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(Integer boardNumber, String email);
+
+    ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber, String email);
+
 }

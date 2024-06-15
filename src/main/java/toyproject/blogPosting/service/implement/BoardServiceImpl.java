@@ -3,6 +3,7 @@ package toyproject.blogPosting.service.implement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import toyproject.blogPosting.dto.request.board.PatchBoardRequestDto;
 import toyproject.blogPosting.dto.request.board.PostCommentRequestDto;
 import toyproject.blogPosting.dto.response.board.*;
 import toyproject.blogPosting.dto.request.board.PostBoardRequestDto;
@@ -245,5 +246,48 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return DeleteBoardResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber, String email) {
+
+        try {
+
+            Board board = boardRepository.findByBoardNumber(boardNumber);
+            if (board == null) {
+                return PatchBoardResponseDto.notExistBoard();
+            }
+
+            boolean existedUser = userRepository.existsByEmail(email);
+            if (!existedUser) {
+                return PatchBoardResponseDto.notExistUser();
+            }
+
+            String writerEmail = board.getWriterEmail();
+            boolean isWriter = writerEmail.equals(email);
+            if (!isWriter) {
+                return PatchBoardResponseDto.noPermission();
+            }
+
+            board.patchBoard(dto);
+            boardRepository.save(board);
+
+            imageRepository.deleteByBoardNumber(boardNumber); // 원래 존재했던 이미지를 모두 지운다
+            List<String> boardImageList = dto.getBoardImageList();
+            List<Image> images = new ArrayList<>();
+
+            for (String boardImage : boardImageList) {
+                Image image = new Image(boardNumber, boardImage);
+                images.add(image);
+            }
+
+            imageRepository.saveAll(images);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PatchBoardResponseDto.success();
     }
 }

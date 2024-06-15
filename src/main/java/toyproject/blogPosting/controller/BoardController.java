@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import toyproject.blogPosting.dto.request.board.PatchBoardRequestDto;
 import toyproject.blogPosting.dto.request.board.PostCommentRequestDto;
 import toyproject.blogPosting.dto.response.board.*;
 import toyproject.blogPosting.dto.request.board.PostBoardRequestDto;
@@ -86,4 +87,13 @@ public class BoardController {
         return response;
     }
 
+    @PatchMapping("/{boardNumber}")
+    public ResponseEntity<? super PatchBoardResponseDto> patchBoard(
+            @RequestBody @Valid PatchBoardRequestDto requestBody,
+            @PathVariable("boardNumber") Integer boardNumber,
+            @AuthenticationPrincipal String email) {
+
+        ResponseEntity<? super PatchBoardResponseDto> response = boardService.patchBoard(requestBody, boardNumber, email);
+        return response;
+    }
 }

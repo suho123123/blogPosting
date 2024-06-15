@@ -3,8 +3,8 @@ import { SignInRequestDto, SignUpRequestDto } from "./request/auth";
 import { SignInResponseDto, SignUpResponseDto } from "./response/auth";
 import { ResponseDto } from "./response";
 import { GetSignInUserResponseDto } from "./response/user";
-import { PostBoardRequestDto, PostCommentRequestDto } from "./request/board";
-import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, PutFavoriteResponeDto, PostCommentResponseDto } from "./response/board";
+import { PatchBoardRequestDto, PostBoardRequestDto, PostCommentRequestDto } from "./request/board";
+import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, PutFavoriteResponeDto, PostCommentResponseDto, PatchBoardResponseDto } from "./response/board";
 
 const DOMAIN = 'http://localhost:8080';
 
@@ -55,6 +55,7 @@ const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 const PUT_FAVORITE_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}/favorite`;
 const POST_COMMENT_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}/comment`;
 const DELETE_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
+const PATCH_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
 
 export const increaseViewCountRequest = async (boardNumber: number | string) => {
     const result = await axios.get(INCREASE_VIEW_COUNT_URL(boardNumber))
@@ -139,6 +140,20 @@ export const postCommentRequest = async (boardNumber: number | string, requestBo
         })
     return result;
 } 
+
+export const patchBoardRequest = async (boardNumber: number | string, requestBody: PatchBoardRequestDto, accessToken: string) => {
+    const result = await axios.patch(PATCH_BOARD_URL(boardNumber), requestBody, authorization(accessToken))
+        .then(response => {
+            const responseBody: PatchBoardResponseDto = response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if (!error.response) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+    return result;
+}
 
 export const putFavoriteRequest = async (boardNumber: number | string, accessToken: string) => {
     const result = await axios.put(PUT_FAVORITE_URL(boardNumber), {}, authorization(accessToken))

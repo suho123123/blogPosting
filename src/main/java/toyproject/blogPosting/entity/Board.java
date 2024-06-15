@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import toyproject.blogPosting.dto.request.board.PatchBoardRequestDto;
 import toyproject.blogPosting.dto.request.board.PostBoardRequestDto;
 
 import java.text.SimpleDateFormat;
@@ -59,5 +60,11 @@ public class Board {
 
     public void increaseCommentCount() {
         this.commentCount++;
+    }
+
+    // 게시물 수정 메서드
+    public void patchBoard(PatchBoardRequestDto dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
     }
 }
