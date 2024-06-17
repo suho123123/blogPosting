@@ -34,6 +34,7 @@ public class BoardServiceImpl implements BoardService {
     private final FavoriteRepository favoriteRepository;
     private final CommentRepository commentRepository;
     private final BoardListViewRepository boardListViewRepository;
+    private final SearchLogRepository searchLogRepository;
 
     @Override
     public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
@@ -332,5 +333,31 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return GetTop3BoardListResponseDto.success(boardListViewList);
+    }
+
+    @Override
+    public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord, String preSearchWord) {
+
+        List<BoardListView> boardListViewList = new ArrayList<>();
+
+        try {
+
+            boardListViewList = boardListViewRepository.findByTitleContainsOrContentContainsOrderByWriteDatetimeDesc(searchWord, searchWord);
+
+            SearchLog searchLog = new SearchLog(searchWord, preSearchWord, false);
+            searchLogRepository.save(searchLog);
+
+            boolean relation = preSearchWord != null;
+            if (relation) {
+                SearchLog searchLog2 = new SearchLog(preSearchWord, searchWord, relation);
+                searchLogRepository.save(searchLog2);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetSearchBoardListResponseDto.success(boardListViewList);
     }
 }
