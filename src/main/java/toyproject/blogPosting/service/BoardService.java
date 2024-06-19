@@ -32,4 +32,6 @@ public interface BoardService {
 
     ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord, String preSearchWord);
 
+    ResponseEntity<? super GetUserBoardListResponseDto> getUserBoardList(String email);
+
 }
